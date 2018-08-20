@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import Character from './views/Character.vue'
+import Combat from './views/Combat.vue'
 
 Vue.use(Router)
 
@@ -12,8 +14,15 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
-    },
-    {
+    }, {
+      path: '/character',
+      name: 'character',
+      component: Character
+    }, {
+      path: '/combat',
+      name: 'combat',
+      component: Combat
+    }, {
       path: '/about',
       name: 'about',
       // route level code-splitting
