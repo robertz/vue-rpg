@@ -4,7 +4,8 @@
         <div class="column">
           <div>You: {{ character.current.hp }}</div>
           <div v-for="(opponent, i) in opponents" :key="i">{{ opponent.name }}: {{ opponent.attr._hp }}</div>
-          <a class="button is-primary" v-if="inCombat" @click="eventLoop">Combat Loop</a>
+          <a class="button is-primary" v-if="inCombat" @click="eventLoop">Attack</a>
+          <a class="button is-primary" v-else @click="restart">Restart Combat</a>
         </div>
         <div class="column">
             <ul>
@@ -31,7 +32,6 @@ export default {
     return {
       rounds: 0,
       alive: true,
-      inCombat: true,
       hasInitiative: false,
       opponents: [],
       combatLog: []
@@ -42,9 +42,10 @@ export default {
       if (this.rounds === 0) {
         this.hasInitiative = this.character.stats.dex + this.modifier(this.character.stats.dex) > this.opponents[0].stats.dex + this.modifier(this.opponents[0].stats.dex)
         this.opponents[0].attr._hp = this.opponents[0].attr.hp
-        this.rounds++
       }
+      this.rounds++
 
+      this.combatLog.push(`Round ${this.rounds}:`)
       // if hasInit player goes first, otherwise opponents go first
       if (this.hasInitiative) {
         this.combatLog.push(`${this.character.name} attacking:`)
@@ -71,7 +72,6 @@ export default {
             }
             break
         }
-        this.inCombat = !!this.opponents.filter((i) => { return i.attr._hp > 0 }).length
 
         // calculate attack for each opponent
         for (let m = 0; m < this.opponents.length; m++) {
@@ -130,7 +130,6 @@ export default {
         }
 
         this.combatLog.push(`${this.character.name} attacking:`)
-
         let pcAtk = this.roll('1d20')
         switch (pcAtk) {
           case 1:
@@ -153,7 +152,6 @@ export default {
             }
             break
         }
-        this.inCombat = !!this.opponents.filter((i) => { return i.attr._hp > 0 }).length
       }
 
       if (!this.inCombat && this.alive) {
@@ -167,6 +165,13 @@ export default {
     },
     modifier: function (value) {
       return Math.floor((parseInt(value) - 10) / 2)
+    },
+    restart: function () {
+      this.character.current.hp = this.character.attr.hp
+      this.opponents[0] = this.monsters[0]
+      this.opponents[0].attr._hp = this.opponents[0].attr.hp
+      this.rounds = 0
+      this.combatLog = []
     },
     roll: function (dice) {
       let count = dice.split('d')[0]
@@ -188,6 +193,10 @@ export default {
     }
   },
   computed: {
+    inCombat: function () {
+      if (this.character.current.hp < 1) return false
+      return !!this.opponents.filter((i) => { return i.attr._hp > 0 }).length
+    },
     ...mapState(['character', 'data', 'monsters'])
   }
 }

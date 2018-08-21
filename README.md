@@ -1,4 +1,5 @@
 # vue-rpg
+A fun little learning project
 
 ## Project setup
 ```
