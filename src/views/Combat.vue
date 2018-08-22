@@ -1,16 +1,41 @@
 <template>
 <div class="combat container-fluid">
     <div class="columns">
-        <div class="column">
-          <div>You: {{ character.current.hp }}</div>
-          <div v-for="(opponent, i) in opponents" :key="i">{{ opponent.name }}: {{ opponent.attr._hp }}</div>
-          <a class="button is-primary" v-if="inCombat" @click="eventLoop">Attack</a>
-          <a class="button is-primary" v-else @click="restart">Restart Combat</a>
+        <div class="column char">
+
+            <div class="box">
+            <h5 class="title is-5">{{ character.name }}</h5>
+            <div>
+                <h6 class="title is-6 is-spaced">Attributes</h6>
+                <div>Level: {{ character.attr.lvl }}</div>
+                <div>Exp: {{ character.attr.xp }}</div>
+                <div>HP: {{ character.current.hp }} / {{ character.attr.hp }}</div>
+            </div>
+            <div style="margin-top: 10px;">
+                <h6 class="title is-6 is-spaced">Stats</h6>
+                <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
+                <div>Dex: {{ character.stats.dex }} ({{ character.stats.dex | modifier | plussed }})</div>
+                <div>Con: {{ character.stats.con }} ({{ character.stats.con | modifier | plussed }})</div>
+                <div>Int: {{ character.stats.int }} ({{ character.stats.int | modifier | plussed }})</div>
+                <div>Wis: {{ character.stats.wis }} ({{ character.stats.wis | modifier | plussed }})</div>
+                <div>Chr: {{ character.stats.chr }} ({{ character.stats.chr | modifier | plussed }})</div>
+            </div>
+            </div>
+
+          <a class="button is-primary" v-if="inCombat && alive" @click="eventLoop">Attack</a>
+          <a class="button is-primary" v-if="!inCombat" @click="restart">Restart Combat</a>
+
+        </div>
+        <div class="column char">
+          <div v-for="(opponent, i) in opponents" :key="i" class="box">
+            <h5 class="title is-5">{{ opponent.name }}</h5>
+            HP: {{ opponent.attr._hp }} / {{ opponent.attr.hp }}
+          </div>
         </div>
         <div class="column">
-            <ul>
-                <li v-for="(item, index) in combatLog" :key="index">{{ item }}</li>
-            </ul>
+          <ul>
+            <li v-for="(item, index) in combatLog" :key="index">{{ item }}</li>
+          </ul>
         </div>
     </div>
 
@@ -22,12 +47,6 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'combat',
-  created () {
-    this.character.current.hp = this.character.attr.hp
-    this.$store.commit('SET_CHARACTER', this.character)
-
-    this.restart()
-  },
   data () {
     return {
       rounds: 0,
@@ -38,7 +57,6 @@ export default {
   },
   methods: {
     pcAttack: function () {
-      this.combatLog.push(`${this.character.name} attacking:`)
       let pcAtk = this.roll('1d20')
       switch (pcAtk) {
         case 1:
@@ -66,7 +84,6 @@ export default {
       // calculate attack for each opponent
       for (let m = 0; m < this.opponents.length; m++) {
         if (this.inCombat) { // if alive and opponents alive
-          this.combatLog.push(`${this.opponents[m].name} attacking:`)
           let npcAtk = this.roll('1d20')
           switch (npcAtk) {
             case 1:
@@ -99,8 +116,6 @@ export default {
         this.opponents[0].attr._hp = this.opponents[0].attr.hp
       }
       this.rounds++
-      this.combatLog.push(`Round ${this.rounds}:`)
-
       // if hasInit player goes first, otherwise opponents go first
       if (this.hasInitiative) {
         this.pcAttack()
@@ -136,13 +151,16 @@ export default {
       return Math.floor((parseInt(value) - 10) / 2)
     },
     restart: function () {
+      this.$store.dispatch('refreshCharacter')
       this.character.current.hp = this.character.attr.hp
+      this.rounds = 0
       this.opponents = []
-
+      this.combatLog = []
       this.opponents.push(this.monsters[ Math.floor(Math.random() * this.monsters.length) ])
 
-      this.rounds = 0
-      this.combatLog = []
+      for (let i = 0; i < this.opponents.length; i++) {
+        this.opponents[i].attr._hp = this.opponents[i].attr.hp
+      }
     },
     roll: function (dice, critical = false) {
       // critical roles should roll double ie 1d6 becomes 2d6
@@ -160,6 +178,9 @@ export default {
     }
   },
   filters: {
+    plussed: function (value) {
+      return parseInt(value) >= 0 ? '+' + value : value
+    },
     modifier: function (value) {
       return Math.floor((parseInt(value) - 10) / 2)
     }
@@ -168,6 +189,9 @@ export default {
     alive: function () {
       return this.character.current.hp > 0
     },
+    mobs: function () {
+      return this.opponents.filter((i) => { return i.attr._hp > 0 })
+    },
     inCombat: function () {
       return !!this.opponents.filter((i) => { return i.attr._hp > 0 }).length && this.character.current.hp > 0
     },
@@ -175,3 +199,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.char {
+ margin: 8px 12px;
+}
+</style>
