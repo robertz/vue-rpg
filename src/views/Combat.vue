@@ -24,143 +24,112 @@ export default {
   name: 'combat',
   created () {
     this.character.current.hp = this.character.attr.hp
-    this.opponents[0] = this.monsters[0]
-
     this.$store.commit('SET_CHARACTER', this.character)
+
+    this.restart()
   },
   data () {
     return {
       rounds: 0,
-      alive: true,
       hasInitiative: false,
       opponents: [],
       combatLog: []
     }
   },
   methods: {
+    pcAttack: function () {
+      this.combatLog.push(`${this.character.name} attacking:`)
+      let pcAtk = this.roll('1d20')
+      switch (pcAtk) {
+        case 1:
+          this.combatLog.push('You rolled a 1 for attack roll. You missed!')
+          break
+        case 20:
+          this.combatLog.push('You rolled a 20 for attack roll. Critical Hit!')
+          let baseDmg = this.roll('1d6', true) + this.modifier(this.character.stats.str)
+          this.combatLog.push(`You hit the ${this.opponents[0].name} for ${baseDmg} points of damage.`)
+          this.opponents[0].attr._hp -= baseDmg
+          break
+        default:
+          let doesHit = pcAtk + this.modifier(this.character.stats.str) > this.opponents[0].attr.ac
+          if (doesHit) {
+            let baseDmg = this.roll('1d6') + this.modifier(this.character.stats.str)
+            this.combatLog.push(`You hit the ${this.opponents[0].name} for ${baseDmg} points of damage.`)
+            this.opponents[0].attr._hp -= baseDmg
+          } else {
+            this.combatLog.push(`You attack the ${this.opponents[0].name}, but miss!`)
+          }
+          break
+      }
+    },
+    npcAttack: function () {
+      // calculate attack for each opponent
+      for (let m = 0; m < this.opponents.length; m++) {
+        if (this.inCombat) { // if alive and opponents alive
+          this.combatLog.push(`${this.opponents[m].name} attacking:`)
+          let npcAtk = this.roll('1d20')
+          switch (npcAtk) {
+            case 1:
+              this.combatLog.push(this.opponents[m].name + ' rolled a 1 for attack roll. It missed!')
+              break
+            case 20:
+              this.combatLog.push(this.opponents[m].name + ' rolled a 20 for attack roll. Critical Hit!')
+              let weap = this.opponents[m].weapons[0]
+              let baseDmg = this.roll(weap.dmg, true) + this.modifier(this.opponents[m].stats.str) + weap.dmgBonus
+              this.combatLog.push(`${this.opponents[m].name} hits you with a ${weap.name} for ${baseDmg} points of damage.`)
+              this.character.current.hp -= baseDmg
+              break
+            default:
+              let doesHit = npcAtk + this.modifier(this.opponents[m].stats.str) + this.opponents[m].weapons[0].hitBonus > this.character.attr.ac
+              if (doesHit) {
+                let baseDmg = this.roll(this.opponents[m].weapons[0].dmg) + this.opponents[m].weapons[0].dmgBonus
+                this.combatLog.push(`${this.opponents[m].name} hits you with a ${this.opponents[m].weapons[0].name} for ${baseDmg} points of damage.`)
+                this.character.current.hp -= baseDmg
+              } else {
+                this.combatLog.push(`The ${this.opponents[m].name} attacks with a ${this.opponents[m].weapons[0].name}, but misses!`)
+              }
+              break
+          }
+        }
+      }
+    },
     eventLoop: function () {
       if (this.rounds === 0) {
         this.hasInitiative = this.character.stats.dex + this.modifier(this.character.stats.dex) > this.opponents[0].stats.dex + this.modifier(this.opponents[0].stats.dex)
         this.opponents[0].attr._hp = this.opponents[0].attr.hp
       }
       this.rounds++
-
       this.combatLog.push(`Round ${this.rounds}:`)
+
       // if hasInit player goes first, otherwise opponents go first
       if (this.hasInitiative) {
-        this.combatLog.push(`${this.character.name} attacking:`)
-
-        let pcAtk = this.roll('1d20')
-        switch (pcAtk) {
-          case 1:
-            this.combatLog.push('You rolled a 1 for attack roll. You missed!')
-            break
-          case 20:
-            this.combatLog.push('You rolled a 20 for attack roll. Critical Hit!')
-            let baseDmg = this.roll('2d6') + this.modifier(this.character.stats.str)
-            this.combatLog.push(`You hit for ${baseDmg} points of damage.`)
-            this.opponents[0].attr._hp -= baseDmg
-            break
-          default:
-            let doesHit = pcAtk + this.modifier(this.character.stats.str) > this.opponents[0].attr.ac
-            if (doesHit) {
-              let baseDmg = this.roll('1d6') + this.modifier(this.character.stats.str)
-              this.combatLog.push(`You hit for ${baseDmg} points of damage.`)
-              this.opponents[0].attr._hp -= baseDmg
-            } else {
-              this.combatLog.push('You swing, but miss the creature')
-            }
-            break
-        }
-
-        // calculate attack for each opponent
-        for (let m = 0; m < this.opponents.length; m++) {
-          this.combatLog.push(`${this.opponents[m].name} attacking:`)
-
-          let npcAtk = this.roll('1d20')
-          switch (npcAtk) {
-            case 1:
-              this.combatLog.push(this.opponents[m].name + ' rolled a 1 for attack roll. It missed!')
-              break
-            case 20:
-              this.combatLog.push(this.opponents[m].name + ' rolled a 20 for attack roll. Critical Hit!')
-              let baseDmg = this.roll('2d6') + this.modifier(this.opponents[m].stats.str)
-              this.combatLog.push(`You have been hit for ${baseDmg} points of damage.`)
-              this.character.current.hp -= baseDmg
-              break
-            default:
-              let doesHit = npcAtk + this.modifier(this.opponents[m].stats.str) > this.character.attr.ac
-              if (doesHit) {
-                let baseDmg = this.roll('1d6') + this.modifier(this.opponents[m].stats.str)
-                this.combatLog.push(`You have been hit for ${baseDmg} points of damage.`)
-                this.character.current.hp -= baseDmg
-              } else {
-                this.combatLog.push('The creature swings but misses you')
-              }
-              break
-          }
+        this.pcAttack()
+        if (this.inCombat) {
+          this.npcAttack()
         }
       } else {
         // calculate attack for each opponent
-        for (let m = 0; m < this.opponents.length; m++) {
-          this.combatLog.push(`${this.opponents[m].name} attacking:`)
-
-          let npcAtk = this.roll('1d20')
-          switch (npcAtk) {
-            case 1:
-              this.combatLog.push(this.opponents[m].name + ' rolled a 1 for attack roll. It missed!')
-              break
-            case 20:
-              this.combatLog.push(this.opponents[m].name + ' rolled a 20 for attack roll. Critical Hit!')
-              let baseDmg = this.roll('2d6') + this.modifier(this.opponents[m].stats.str)
-              this.combatLog.push(`You have been hit for ${baseDmg} points of damage.`)
-              this.character.current.hp -= baseDmg
-              break
-            default:
-              let doesHit = npcAtk + this.modifier(this.opponents[m].stats.str) > this.character.attr.ac
-              if (doesHit) {
-                let baseDmg = this.roll('1d6') + this.modifier(this.opponents[m].stats.str)
-                this.combatLog.push(`You have been hit for ${baseDmg} points of damage.`)
-                this.character.current.hp -= baseDmg
-              } else {
-                this.combatLog.push('The creature swings but misses you')
-              }
-              break
-          }
-        }
-
-        this.combatLog.push(`${this.character.name} attacking:`)
-        let pcAtk = this.roll('1d20')
-        switch (pcAtk) {
-          case 1:
-            this.combatLog.push('You rolled a 1 for attack roll. You missed!')
-            break
-          case 20:
-            this.combatLog.push('You rolled a 20 for attack roll. Critical Hit!')
-            let baseDmg = this.roll('2d6') + this.modifier(this.character.stats.str)
-            this.combatLog.push(`You hit for ${baseDmg} points of damage.`)
-            this.opponents[0].attr._hp -= baseDmg
-            break
-          default:
-            let doesHit = pcAtk + this.modifier(this.character.stats.str) > this.opponents[0].attr.ac
-            if (doesHit) {
-              let baseDmg = this.roll('1d6') + this.modifier(this.character.stats.str)
-              this.combatLog.push(`You hit for ${baseDmg} points of damage.`)
-              this.opponents[0].attr._hp -= baseDmg
-            } else {
-              this.combatLog.push('You swing, but miss the creature')
-            }
-            break
+        this.npcAttack()
+        if (this.inCombat) {
+          this.pcAttack()
         }
       }
 
+      // All opponents are dead and pc is alive
       if (!this.inCombat && this.alive) {
         this.combatLog.push('You have won!!!!')
 
-        this.character.attr.xp += 25
+        for (let i = 0; i < this.opponents.length; i++) {
+          this.character.attr.xp += this.opponents[i].attr.xp
+        }
 
         this.$store.commit('SET_CHARACTER', this.character)
         this.saveCharacter(this.character)
+      }
+
+      // DED
+      if (!this.inCombat && !this.alive) {
+        this.combatLog.push('You have died!!!!')
       }
     },
     modifier: function (value) {
@@ -168,13 +137,16 @@ export default {
     },
     restart: function () {
       this.character.current.hp = this.character.attr.hp
-      this.opponents[0] = this.monsters[0]
-      this.opponents[0].attr._hp = this.opponents[0].attr.hp
+      this.opponents = []
+
+      this.opponents.push(this.monsters[ Math.floor(Math.random() * this.monsters.length) ])
+
       this.rounds = 0
       this.combatLog = []
     },
-    roll: function (dice) {
-      let count = dice.split('d')[0]
+    roll: function (dice, critical = false) {
+      // critical roles should roll double ie 1d6 becomes 2d6
+      let count = critical ? dice.split('d')[0] * 2 : dice.split('d')[0]
       let die = dice.split('d')[1]
       let result = 0
       for (let i = 0; i < count; i++) {
@@ -193,9 +165,11 @@ export default {
     }
   },
   computed: {
+    alive: function () {
+      return this.character.current.hp > 0
+    },
     inCombat: function () {
-      if (this.character.current.hp < 1) return false
-      return !!this.opponents.filter((i) => { return i.attr._hp > 0 }).length
+      return !!this.opponents.filter((i) => { return i.attr._hp > 0 }).length && this.character.current.hp > 0
     },
     ...mapState(['character', 'data', 'monsters'])
   }

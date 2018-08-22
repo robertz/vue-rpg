@@ -156,7 +156,7 @@ export default {
       c.attr.hp = 12 + this.modifier(c.stats.con)
       c.attr.lvl = 1
       localStorage.setItem('character', JSON.stringify(c))
-      this.$store.dispatch('refreshCharacter')
+      this.$store.commit('SET_CHARACTER', c)
     }
   },
   filters: {

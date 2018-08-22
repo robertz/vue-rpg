@@ -45,10 +45,34 @@ export default new Vuex.Store({
           cha: 10
         },
         weapons: [{
-          name: 'Scmimitar',
+          name: 'Scimitar',
           hitBonus: 3,
           dmg: '1d6',
           dmgBonus: 1
+        }]
+      },
+      {
+        name: 'Skeleton',
+        attr: {
+          ac: 13,
+          hp: 13,
+          _hp: 13,
+          challenge: '1/4',
+          xp: 50
+        },
+        stats: {
+          str: 10,
+          dex: 14,
+          con: 15,
+          int: 6,
+          wis: 8,
+          cha: 5
+        },
+        weapons: [{
+          name: 'Shortsword',
+          hitBonus: 4,
+          dmg: '1d6',
+          dmgBonus: 2
         }]
       }
     ],
