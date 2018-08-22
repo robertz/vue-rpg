@@ -69,7 +69,7 @@ export default {
           this.opponents[0].attr._hp -= baseDmg
           break
         default:
-          let doesHit = pcAtk + this.modifier(this.character.stats.str) > this.opponents[0].attr.ac
+          let doesHit = pcAtk + this.modifier(this.character.stats.str) + this.byLevel.proficiency > this.opponents[0].attr.ac
           if (doesHit) {
             let baseDmg = this.roll('1d6') + this.modifier(this.character.stats.str)
             this.combatLog.push(`You hit the ${this.opponents[0].name} for ${baseDmg} points of damage.`)
@@ -186,6 +186,9 @@ export default {
     }
   },
   computed: {
+    byLevel: function () {
+      return this.data.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
+    },
     alive: function () {
       return this.character.current.hp > 0
     },

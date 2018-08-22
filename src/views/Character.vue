@@ -149,14 +149,19 @@ export default {
       return Math.floor((parseInt(value) - 10) / 2)
     },
     saveCharacter: function () {
-      let c = this.character
-      c.init = true
-      // Computed values
+      this.character.init = true
+
+      // Add in racial bonuses
+      let race = this.data.races.filter((race) => { return race.name === this.character.race })[0].stats
+      for (let stat in race) {
+        this.character.stats[stat] = parseInt(this.character.stats[stat]) + race[stat]
+      }
+
       // hp + constituion bonus
-      c.attr.hp = 12 + this.modifier(c.stats.con)
-      c.attr.lvl = 1
-      localStorage.setItem('character', JSON.stringify(c))
-      this.$store.commit('SET_CHARACTER', c)
+      this.character.attr.hp = 10 + this.modifier(this.character.stats.con) // warrior
+      this.character.attr.lvl = 1
+      localStorage.setItem('character', JSON.stringify(this.character))
+      this.$store.commit('SET_CHARACTER', this.character)
     }
   },
   filters: {
@@ -168,7 +173,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['character'])
+    ...mapState(['character', 'data'])
   }
 }
 </script>
