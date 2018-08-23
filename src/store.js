@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     character: localStorage.getItem('character') ? JSON.parse(localStorage.getItem('character')) : {
-      name: 'Thor',
+      name: 'Dev the Mighty',
       race: 'Human',
       init: false,
       current: {
@@ -28,80 +28,6 @@ export default new Vuex.Store({
         chr: 3
       }
     },
-    monsters: [
-      {
-        name: 'Bandit',
-        attr: {
-          ac: 12,
-          hp: 11,
-          _hp: 11,
-          challenge: '1/8',
-          xp: 25
-        },
-        stats: {
-          str: 11,
-          dex: 12,
-          con: 12,
-          int: 10,
-          wis: 10,
-          cha: 10
-        },
-        weapons: [{
-          name: 'Scimitar',
-          hitBonus: 3,
-          dmg: '1d6',
-          dmgBonus: 1
-        }]
-      },
-      {
-        name: 'Skeleton',
-        attr: {
-          ac: 13,
-          hp: 13,
-          _hp: 13,
-          challenge: '1/4',
-          xp: 50
-        },
-        stats: {
-          str: 10,
-          dex: 14,
-          con: 15,
-          int: 6,
-          wis: 8,
-          cha: 5
-        },
-        weapons: [{
-          name: 'Shortsword',
-          hitBonus: 4,
-          dmg: '1d6',
-          dmgBonus: 2
-        }]
-      },
-      {
-        name: 'Orc',
-        attr: {
-          ac: 13,
-          hp: 15,
-          _hp: 15,
-          challenge: '1/2',
-          xp: 100
-        },
-        stats: {
-          str: 16,
-          dex: 12,
-          con: 16,
-          int: 7,
-          wis: 11,
-          cha: 10
-        },
-        weapons: [{
-          name: 'Greataxe',
-          hitBonus: 5,
-          dmg: '1d12',
-          dmgBonus: 3
-        }]
-      }
-    ],
     data: {
       advancement: [
         { xp: 0, level: 1, proficiency: 2 },

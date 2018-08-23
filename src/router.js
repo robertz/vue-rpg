@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Character from './views/Character.vue'
 import Combat from './views/Combat.vue'
+import Mobs from './views/Mobs.vue'
 
 Vue.use(Router)
 
@@ -22,6 +23,10 @@ export default new Router({
       path: '/combat',
       name: 'combat',
       component: Combat
+    }, {
+      path: '/mobs',
+      name: 'mobs',
+      component: Mobs
     }, {
       path: '/about',
       name: 'about',

@@ -17,6 +17,7 @@
             <div class="navbar-start">
                 <router-link class="navbar-item" to="/character">Character</router-link>
                 <router-link class="navbar-item" to="/combat">Combat</router-link>
+                <router-link class="navbar-item" to="/mobs">Mobs</router-link>
                 <router-link class="navbar-item" to="/about">About</router-link>
             </div>
         </div>
