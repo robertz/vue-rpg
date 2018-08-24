@@ -126,6 +126,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import gameData from '../gameData.json'
 
 export default {
   name: 'character',
@@ -152,7 +153,7 @@ export default {
       this.character.init = true
 
       // Add in racial bonuses
-      let race = this.data.races.filter((race) => { return race.name === this.character.race })[0].stats
+      let race = gameData.races.filter((race) => { return race.name === this.character.race })[0].stats
       for (let stat in race) {
         this.character.stats[stat] = parseInt(this.character.stats[stat]) + race[stat]
       }
@@ -173,7 +174,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['character', 'data'])
+    ...mapState(['character'])
   }
 }
 </script>
