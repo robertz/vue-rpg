@@ -3,7 +3,11 @@
         <div class="columns">
           <div class="column is-3">
             <div class="box">
-              <input type="text" v-model="searchFilter" />
+              <div class="field">
+                <div class="control">
+                  <input type="text" class="input" v-model="searchFilter" placeholder="Filter Mobs" />
+                </div>
+              </div>
               <div v-for="(mob, index) in filteredMobs" :key="index">
                 <a @click="setDetail(mob.name)">{{ mob.name }}</a>
               </div>

@@ -22,17 +22,27 @@
             </div>
             </div>
 
-          <a class="button is-primary" v-if="inCombat && alive" @click="eventLoop">Attack</a>
-          <a class="button is-primary" v-if="!inCombat" @click="restart">Restart Combat</a>
+          <a class="button is-primary" v-if="mobsAlive && alive" @click="eventLoop">Attack</a>
+          <a class="button is-primary" v-if="!mobsAlive || !alive" @click="restart">Restart Combat</a>
 
         </div>
+
         <div class="column char">
           <div v-for="(opponent, i) in opponents" :key="i" class="box">
             <h5 class="title is-5">{{ opponent.name }}</h5>
             Challenge Rating: {{ opponent.challenge_rating }}<br />
             HP: {{ opponent._hit_points }} / {{ opponent.hit_points }}
+
+            <h6 class="title is-6">Stats</h6>
+            <div>Str: {{ opponent.strength }} ({{ opponent.strength | modifier | plussed }})</div>
+            <div>Dex: {{ opponent.dexterity }} ({{ opponent.dexterity | modifier | plussed }})</div>
+            <div>Con: {{ opponent.constitution }} ({{ opponent.constitution | modifier | plussed }})</div>
+            <div>Int: {{ opponent.intelligence }} ({{ opponent.intelligence | modifier | plussed }})</div>
+            <div>Wis: {{ opponent.wisdom }} ({{ opponent.wisdom | modifier | plussed }})</div>
+            <div>Chr: {{ opponent.charisma }} ({{ opponent.charisma | modifier | plussed }})</div>
           </div>
         </div>
+
         <div class="column char">
           <div class="box is-full-height">
             <h5 class="title is-5">Combat Log</h5>
@@ -53,6 +63,8 @@ export default {
   data () {
     return {
       mobs: mobData.filter((mob) => { return ('name' in mob) }),
+      alive: true,
+      mobsAlive: false,
       rounds: 0,
       hasInitiative: false,
       opponents: [],
@@ -87,11 +99,14 @@ export default {
     npcAttack: function () {
       // calculate attack for each opponent
       for (let m = 0; m < this.opponents.length; m++) {
-        if (this.inCombat) { // if alive and opponents alive
+        if (this.character.current.hp > 0) { // if alive and opponents alive
           let npcAtk = this.roll('1d20')
 
-          let validActions = this.opponents[m].actions.filter((action) => { return ('damage_dice' in action) }) || null
+          let validActions = this.opponents[m].actions.filter((action) => { return ('damage_dice' in action) }) || []
           let selectedAction = validActions[ Math.floor(Math.random() * validActions.length) ]
+          let attackBonus = ('attack_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
+          let damageBonus = ('damage_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
+          let baseDmg = 0
 
           switch (npcAtk) {
             case 1:
@@ -99,24 +114,19 @@ export default {
               break
             case 20:
               this.combatLog.push(this.opponents[m].name + ' rolled a 20 for attack roll. Critical Hit!')
-              let damageBonus = ('damage_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
-
-              let baseDmg = this.roll(selectedAction.damage_dice, true) + this.modifier(this.opponents[m].strength) + damageBonus
+              baseDmg = this.roll(selectedAction.damage_dice, true) + this.modifier(this.opponents[m].strength) + damageBonus
               this.combatLog.push(`${this.opponents[m].name}: ${selectedAction.name} for ${baseDmg} points of damage.`)
               this.character.current.hp -= baseDmg
               break
             default:
-              let attackBonus = ('attack_bonus' in selectedAction) ? selectedAction.attack_bonus : 0
+              baseDmg = this.roll(selectedAction.damage_dice) + damageBonus
               let doesHit = npcAtk + this.modifier(this.opponents[m].strength) + attackBonus > this.character.attr.ac
               if (doesHit) {
-                let damageBonus = ('damage_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
-                let baseDmg = this.roll(selectedAction.damage_dice) + damageBonus
                 this.combatLog.push(`${this.opponents[m].name}: ${selectedAction.name} for ${baseDmg} points of damage.`)
                 this.character.current.hp -= baseDmg
               } else {
                 this.combatLog.push(`${this.opponents[m].name}: ${selectedAction.name}, but misses!`)
               }
-              break
           }
         }
       }
@@ -127,22 +137,27 @@ export default {
         this.opponents[0]._hit_points = this.opponents[0].hit_points
       }
       this.rounds++
+      this.mobsAlive = this.opponents.filter((op) => { return op._hit_points > 0 }).length > 0
+
       // if hasInit player goes first, otherwise opponents go first
       if (this.hasInitiative) {
         this.pcAttack()
-        if (this.inCombat) {
+        if (this.mobsAlive) {
           this.npcAttack()
         }
       } else {
         // calculate attack for each opponent
         this.npcAttack()
-        if (this.inCombat) {
+        if (this.character.current.hp > 0) {
           this.pcAttack()
         }
       }
 
+      this.alive = this.character.current.hp > 0
+      this.mobsAlive = this.opponents.filter((op) => { return op._hit_points > 0 }).length > 0
+
       // All opponents are dead and pc is alive
-      if (!this.inCombat && this.alive) {
+      if (!this.mobsAlive && this.alive) {
         this.combatLog.push('You have won!!!!')
 
         for (let i = 0; i < this.opponents.length; i++) {
@@ -154,7 +169,7 @@ export default {
       }
 
       // DED
-      if (!this.inCombat && !this.alive) {
+      if (this.mobsAlive && !this.alive) {
         this.combatLog.push('You have died!!!!')
       }
     },
@@ -174,6 +189,9 @@ export default {
       for (let i = 0; i < this.opponents.length; i++) {
         this.opponents[i]._hit_points = this.opponents[i].hit_points
       }
+
+      this.alive = true
+      this.mobsAlive = true
     },
     roll: function (dice, critical = false) {
       let rolls = dice.split('+')
@@ -207,16 +225,7 @@ export default {
     byLevel: function () {
       return this.data.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
     },
-    alive: function () {
-      return this.character.current.hp > 0
-    },
-    inCombat: function () {
-      let pcAlive = this.character.current.hp > 0
-      let npcAlive = this.opponents.filter((op) => { return op._hit_points > 0 }).length > 0
-
-      return pcAlive && npcAlive
-    },
-    ...mapState(['character', 'data', 'monsters'])
+    ...mapState(['character', 'data'])
   }
 }
 </script>
