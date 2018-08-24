@@ -105,7 +105,7 @@ export default {
 
           let validActions = this.opponents[m].actions.filter((action) => { return ('damage_dice' in action) }) || []
           let selectedAction = validActions[ Math.floor(Math.random() * validActions.length) ]
-          let attackBonus = ('attack_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
+          let attackBonus = ('attack_bonus' in selectedAction) ? selectedAction.attack_bonus : 0
           let damageBonus = ('damage_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
           let baseDmg = 0
 
