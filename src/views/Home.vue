@@ -1,16 +1,12 @@
 <template>
   <div class="home">
-    {{ message }}
+    <p>D&D Combat simulator...  In progress</p>
+    <p><a href="https://github.com/robertz/vue-rpg">https://github.com/robertz/vue-rpg</a></p>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'home',
-  data () {
-    return {
-      message: 'Homepage content'
-    }
+<style lang="scss" scoped>
+  .home {
+    margin: 16px;
   }
-}
-</script>
+</style>

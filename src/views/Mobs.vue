@@ -49,3 +49,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .mobs {
+    padding: 16px;
+  }
+</style>
