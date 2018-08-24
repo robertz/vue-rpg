@@ -57,6 +57,7 @@
 <script>
 import { mapState } from 'vuex'
 import mobData from '../5e-SRD-Monsters.json'
+import gameData from '../gameData.json'
 
 export default {
   name: 'combat',
@@ -142,6 +143,9 @@ export default {
       // if hasInit player goes first, otherwise opponents go first
       if (this.hasInitiative) {
         this.pcAttack()
+
+        this.mobsAlive = this.opponents.filter((op) => { return op._hit_points > 0 }).length > 0
+
         if (this.mobsAlive) {
           this.npcAttack()
         }
@@ -161,7 +165,7 @@ export default {
         this.combatLog.push('You have won!!!!')
 
         for (let i = 0; i < this.opponents.length; i++) {
-          this.character.attr.xp += 10
+          this.character.attr.xp += gameData.experience.filter((cr) => { return cr.challenge_rating === this.opponents[i].challenge_rating })[0].xp
         }
 
         this.$store.commit('SET_CHARACTER', this.character)
@@ -223,9 +227,9 @@ export default {
   },
   computed: {
     byLevel: function () {
-      return this.data.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
+      return gameData.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
     },
-    ...mapState(['character', 'data'])
+    ...mapState(['character'])
   }
 }
 </script>
