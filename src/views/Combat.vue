@@ -105,8 +105,10 @@ export default {
 
           let validActions = this.opponents[m].actions.filter((action) => { return ('damage_dice' in action) }) || []
           let selectedAction = validActions[ Math.floor(Math.random() * validActions.length) ]
+
           let attackBonus = ('attack_bonus' in selectedAction) ? selectedAction.attack_bonus : 0
           let damageBonus = ('damage_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
+
           let baseDmg = 0
 
           switch (npcAtk) {
@@ -186,9 +188,19 @@ export default {
       this.rounds = 0
       this.opponents = []
       this.combatLog = []
-      this.opponents.push(this.mobs[ Math.floor(Math.random() * this.mobs.length) ])
 
-      // this.opponents.push(this.mobs.filter((mob) => { return mob.name === 'Mastiff'})[0] )
+      let isValid = false
+      let op
+
+      // Not all monsters have damage rolls... this weeds out any bad data (i.e., Sprite)
+      while (!isValid) {
+        op = this.mobs[ Math.floor(Math.random() * this.mobs.length) ]
+        isValid = op.actions.filter((action) => { return ('damage_dice' in action) }).length > 0
+      }
+
+      this.opponents.push(op)
+
+      // this.opponents.push(this.mobs.filter((mob) => { return mob.name === 'Sprite' })[0])
 
       for (let i = 0; i < this.opponents.length; i++) {
         this.opponents[i]._hit_points = this.opponents[i].hit_points
