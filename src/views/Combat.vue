@@ -26,11 +26,7 @@
             <div class="select is-rounded">
               <select v-model="challengeRating">
                 <option value="">Any</option>
-                <option value="0">0</option>
-                <option value="1/8">1/8</option>
-                <option value="1/4">1/4</option>
-                <option value="1/2">1/2</option>
-                <option value="1">1</option>
+                <option v-for="(cr, i) in challengeRatingData" :value="cr.challenge_rating" :key="i">{{ cr.challenge_rating }}</option>
               </select>
             </div>
 
@@ -75,9 +71,13 @@ import gameData from '../gameData.json'
 
 export default {
   name: 'combat',
+  created () {
+    this.challengeRatingData = gameData.experience
+  },
   data () {
     return {
       challengeRating: '',
+      challengeRatingData: [],
       mobs: mobData.filter((mob) => { return ('name' in mob) }),
       alive: true,
       mobsAlive: false,
