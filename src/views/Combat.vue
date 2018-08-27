@@ -4,14 +4,14 @@
         <div class="column char">
 
             <div class="box">
-            <h5 class="title is-5">{{ character.name }}</h5>
-            <div>
+              <h5 class="title is-5">{{ character.name }}</h5>
+              <div>
                 <h6 class="title is-6 is-spaced">Attributes</h6>
                 <div>Level: {{ character.attr.lvl }}</div>
                 <div>Exp: {{ character.attr.xp }}</div>
                 <div>HP: {{ character.current.hp }} / {{ character.attr.hp }}</div>
-            </div>
-            <div style="margin-top: 10px;">
+              </div>
+              <div style="margin-top: 10px;">
                 <h6 class="title is-6 is-spaced">Stats</h6>
                 <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
                 <div>Dex: {{ character.stats.dex }} ({{ character.stats.dex | modifier | plussed }})</div>
@@ -19,11 +19,25 @@
                 <div>Int: {{ character.stats.int }} ({{ character.stats.int | modifier | plussed }})</div>
                 <div>Wis: {{ character.stats.wis }} ({{ character.stats.wis | modifier | plussed }})</div>
                 <div>Chr: {{ character.stats.chr }} ({{ character.stats.chr | modifier | plussed }})</div>
-            </div>
+              </div>
             </div>
 
-          <a class="button is-primary" v-if="mobsAlive && alive" @click="eventLoop">Attack</a>
-          <a class="button is-primary" v-if="!mobsAlive || !alive" @click="restart">Restart Combat</a>
+            <p>Challenge Rating</p>
+            <div class="select is-rounded">
+              <select v-model="challengeRating">
+                <option value="">Any</option>
+                <option value="0">0</option>
+                <option value="1/8">1/8</option>
+                <option value="1/4">1/4</option>
+                <option value="1/2">1/2</option>
+                <option value="1">1</option>
+              </select>
+            </div>
+
+            <br><br>
+
+            <a class="button is-primary" v-if="mobsAlive && alive" @click="eventLoop">Attack</a>
+            <a class="button is-primary" v-if="!mobsAlive || !alive" @click="restart">Restart Combat</a>
 
         </div>
 
@@ -63,6 +77,7 @@ export default {
   name: 'combat',
   data () {
     return {
+      challengeRating: '',
       mobs: mobData.filter((mob) => { return ('name' in mob) }),
       alive: true,
       mobsAlive: false,
@@ -191,10 +206,15 @@ export default {
 
       let isValid = false
       let op
+      let filteredMobs
+
+      if (this.challengeRating.length) {
+        filteredMobs = this.mobs.filter((mob) => { return mob.challenge_rating === this.challengeRating })
+      }
 
       // Not all monsters have damage rolls... this weeds out any bad data (i.e., Sprite)
       while (!isValid) {
-        op = this.mobs[ Math.floor(Math.random() * this.mobs.length) ]
+        op = this.challengeRating.length ? filteredMobs[Math.floor(Math.random() * filteredMobs.length)] : this.mobs[ Math.floor(Math.random() * this.mobs.length) ]
         isValid = op.actions.filter((action) => { return ('damage_dice' in action) }).length > 0
       }
 
