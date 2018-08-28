@@ -195,6 +195,7 @@
 <script>
 import { mapState } from 'vuex'
 import gameData from '../gameData.json'
+import mixins from '../mixins.js'
 
 export default {
   name: 'character',
@@ -209,15 +210,6 @@ export default {
       this.character.stats[attr] += 1
       this.pointsAssigned += 1
     },
-    roll: function (dice) {
-      let count = dice.split('d')[0]
-      let die = dice.split('d')[1]
-      let result = 0
-      for (let i = 0; i < count; i++) {
-        result += Math.floor(Math.random() * die) + 1
-      }
-      return parseInt(result)
-    },
     saveLevel: function () {
       this.character.attr.hp += 7 + this.modifier(this.character.stats.con) // warrior
       this.character.attr.lvl += 1
@@ -227,9 +219,6 @@ export default {
     },
     setRandValue: function (type) {
       this.character.stats[type] = this.roll('3d6')
-    },
-    modifier: function (value) {
-      return Math.floor((parseInt(value) - 10) / 2)
     },
     saveCharacter: function () {
       this.character.init = true
@@ -247,14 +236,6 @@ export default {
       this.$store.commit('SET_CHARACTER', this.character)
     }
   },
-  filters: {
-    plussed: function (value) {
-      return parseInt(value) >= 0 ? '+' + value : value
-    },
-    modifier: function (value) {
-      return Math.floor((parseInt(value) - 10) / 2)
-    }
-  },
   computed: {
     pointsAvailable: function () {
       // Two extra points to spend on stats per level
@@ -269,7 +250,8 @@ export default {
       return level
     },
     ...mapState(['character'])
-  }
+  },
+  mixins: [mixins]
 }
 </script>
 

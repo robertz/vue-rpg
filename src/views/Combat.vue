@@ -66,6 +66,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import mixins from '../mixins.js'
 import mobData from '../5e-SRD-Monsters.json'
 import gameData from '../gameData.json'
 
@@ -194,9 +195,6 @@ export default {
         this.combatLog.push('You have died!!!!')
       }
     },
-    modifier: function (value) {
-      return Math.floor((parseInt(value) - 10) / 2)
-    },
     restart: function () {
       this.$store.dispatch('refreshCharacter')
       this.character.current.hp = this.character.attr.hp
@@ -229,32 +227,9 @@ export default {
       this.alive = true
       this.mobsAlive = true
     },
-    roll: function (dice, critical = false) {
-      let rolls = dice.split('+')
-      let result = 0
-
-      for (let r = 0; r < rolls.length; r++) {
-        // critical roles should roll double ie 1d6 becomes 2d6
-        let count = critical ? rolls[r].split('d')[0] * 2 : rolls[r].split('d')[0]
-        let die = rolls[r].split('d')[1]
-        for (let i = 0; i < count; i++) {
-          result += Math.floor(Math.random() * die) + 1
-        }
-      }
-
-      return parseInt(result)
-    },
     saveCharacter: function () {
       localStorage.setItem('character', JSON.stringify(this.character))
       this.$store.dispatch('refreshCharacter')
-    }
-  },
-  filters: {
-    plussed: function (value) {
-      return parseInt(value) >= 0 ? '+' + value : value
-    },
-    modifier: function (value) {
-      return Math.floor((parseInt(value) - 10) / 2)
     }
   },
   computed: {
@@ -262,7 +237,8 @@ export default {
       return gameData.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
     },
     ...mapState(['character'])
-  }
+  },
+  mixins: [mixins]
 }
 </script>
 
