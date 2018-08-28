@@ -32,9 +32,9 @@
 
             <br><br>
 
-            <a class="button is-primary" v-if="mobsAlive && alive" @click="eventLoop">Attack</a>
-            <a class="button is-primary" v-if="!mobsAlive || !alive" @click="restart">Restart Combat</a>
-
+            <a class="button is-primary" v-if="(mobsAlive && alive) && !canLevel" @click="eventLoop">Attack</a>
+            <a class="button is-primary" v-if="(!mobsAlive || !alive) && !canLevel" @click="restart">Restart Combat</a>
+            <router-link class="button is-warning" v-if="canLevel" to="/character">Level Up!</router-link>
         </div>
 
         <div class="column char">
@@ -66,9 +66,9 @@
 
 <script>
 import { mapState } from 'vuex'
-import mixins from '../mixins.js'
 import mobData from '../5e-SRD-Monsters.json'
 import gameData from '../gameData.json'
+import mixins from '../mixins.js'
 
 export default {
   name: 'combat',

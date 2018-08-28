@@ -1,4 +1,19 @@
+import gameData from './gameData.json'
+
 export default {
+  computed: {
+    canLevel: function () {
+      return this.levelByExperience > this.character.attr.lvl
+    },
+    levelByExperience: function () {
+      // calculate the level the character should be by experience
+      let level = 1
+      for (let i = 0; i < gameData.advancement.length; i++) {
+        level = this.character.attr.xp >= gameData.advancement[i].xp ? gameData.advancement[i].level : level
+      }
+      return level
+    }
+  },
   methods: {
     roll: function (dice, critical = false) {
       let rolls = dice.split('+')

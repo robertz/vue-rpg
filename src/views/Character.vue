@@ -194,8 +194,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import gameData from '../gameData.json'
 import mixins from '../mixins.js'
+import gameData from '../gameData.json'
 
 export default {
   name: 'character',
@@ -237,18 +237,6 @@ export default {
     }
   },
   computed: {
-    pointsAvailable: function () {
-      // Two extra points to spend on stats per level
-      return this.levelByExperience > 1 ? (this.levelByExperience - 1) * 2 : 0
-    },
-    levelByExperience: function () {
-      // calculate the level the character should be by experience
-      let level = 1
-      for (let i = 0; i < gameData.advancement.length; i++) {
-        level = this.character.attr.xp >= gameData.advancement[i].xp ? gameData.advancement[i].level : level
-      }
-      return level
-    },
     ...mapState(['character'])
   },
   mixins: [mixins]
