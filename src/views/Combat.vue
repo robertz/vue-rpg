@@ -23,9 +23,9 @@
 
                 <p class="card-subtitle mt-1 text-muted">Challenge Rating</p>
                 <select class="form-control mt-1" v-model="challengeRating">
-                    <option value="">Any</option>
-                    <option v-for="(cr, i) in challengeRatingData" :value="cr.challenge_rating" :key="i">{{ cr.challenge_rating }}</option>
-                </select>
+                        <option value="">Any</option>
+                        <option v-for="(cr, i) in challengeRatingData" :value="cr.challenge_rating" :key="i">{{ cr.challenge_rating }}</option>
+                    </select>
 
                 <button class="btn btn-primary mt-1" v-if="(mobsAlive && alive) && !canLevel" @click="eventLoop">Attack</button>
                 <button class="btn btn-primary mt-1" v-if="(!mobsAlive || !alive) && !canLevel" @click="restart">Restart Combat</button>
@@ -36,8 +36,7 @@
                 <div v-for="(opponent, i) in opponents" :key="i" class="card">
                     <div class="card-body">
                         <div class="card-title mb-1">{{ opponent.name }}</div>
-                        Challenge Rating: {{ opponent.challenge_rating }}<br />
-                        HP: {{ opponent._hit_points }} / {{ opponent.hit_points }}
+                        Challenge Rating: {{ opponent.challenge_rating }}<br /> HP: {{ opponent._hit_points }} / {{ opponent.hit_points }}
                         <h6 class="title is-6">Stats</h6>
                         <div>Str: {{ opponent.strength }} ({{ opponent.strength | modifier | plussed }})</div>
                         <div>Dex: {{ opponent.dexterity }} ({{ opponent.dexterity | modifier | plussed }})</div>
@@ -63,7 +62,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+  mapState
+} from 'vuex'
 import mobData from '../5e-SRD-Monsters.json'
 import mixins from '../mixins/gameData.js'
 
@@ -73,7 +74,9 @@ export default {
     return {
       challengeRating: '',
       challengeRatingData: [],
-      mobs: mobData.filter((mob) => { return ('name' in mob) }),
+      mobs: mobData.filter((mob) => {
+        return ('name' in mob)
+      }),
       alive: true,
       mobsAlive: false,
       rounds: 0,
@@ -113,8 +116,10 @@ export default {
         if (this.character.current.hp > 0) { // if alive and opponents alive
           let npcAtk = this.roll('1d20')
 
-          let validActions = this.opponents[m].actions.filter((action) => { return ('damage_dice' in action) }) || []
-          let selectedAction = validActions[ Math.floor(Math.random() * validActions.length) ]
+          let validActions = this.opponents[m].actions.filter((action) => {
+            return ('damage_dice' in action)
+          }) || []
+          let selectedAction = validActions[Math.floor(Math.random() * validActions.length)]
 
           let attackBonus = ('attack_bonus' in selectedAction) ? selectedAction.attack_bonus : 0
           let damageBonus = ('damage_bonus' in selectedAction) ? selectedAction.damage_bonus : 0
@@ -150,13 +155,17 @@ export default {
         this.opponents[0]._hit_points = this.opponents[0].hit_points
       }
       this.rounds++
-      this.mobsAlive = this.opponents.filter((op) => { return op._hit_points > 0 }).length > 0
+      this.mobsAlive = this.opponents.filter((op) => {
+        return op._hit_points > 0
+      }).length > 0
 
       // if hasInit player goes first, otherwise opponents go first
       if (this.hasInitiative) {
         this.pcAttack()
 
-        this.mobsAlive = this.opponents.filter((op) => { return op._hit_points > 0 }).length > 0
+        this.mobsAlive = this.opponents.filter((op) => {
+          return op._hit_points > 0
+        }).length > 0
 
         if (this.mobsAlive) {
           this.npcAttack()
@@ -170,14 +179,18 @@ export default {
       }
 
       this.alive = this.character.current.hp > 0
-      this.mobsAlive = this.opponents.filter((op) => { return op._hit_points > 0 }).length > 0
+      this.mobsAlive = this.opponents.filter((op) => {
+        return op._hit_points > 0
+      }).length > 0
 
       // All opponents are dead and pc is alive
       if (!this.mobsAlive && this.alive) {
         this.combatLog.push('You have won!!!!')
 
         for (let i = 0; i < this.opponents.length; i++) {
-          this.character.attr.xp += this.challengeRatingData.filter((cr) => { return cr.challenge_rating === this.opponents[i].challenge_rating })[0].xp
+          this.character.attr.xp += this.challengeRatingData.filter((cr) => {
+            return cr.challenge_rating === this.opponents[i].challenge_rating
+          })[0].xp
         }
 
         this.$store.commit('SET_CHARACTER', this.character)
@@ -201,13 +214,17 @@ export default {
       let filteredMobs
 
       if (this.challengeRating.length) {
-        filteredMobs = this.mobs.filter((mob) => { return mob.challenge_rating === this.challengeRating })
+        filteredMobs = this.mobs.filter((mob) => {
+          return mob.challenge_rating === this.challengeRating
+        })
       }
 
       // Not all monsters have damage rolls... this weeds out any bad data (i.e., Sprite)
       while (!isValid) {
-        op = this.challengeRating.length ? filteredMobs[Math.floor(Math.random() * filteredMobs.length)] : this.mobs[ Math.floor(Math.random() * this.mobs.length) ]
-        isValid = op.actions.filter((action) => { return ('damage_dice' in action) }).length > 0
+        op = this.challengeRating.length ? filteredMobs[Math.floor(Math.random() * filteredMobs.length)] : this.mobs[Math.floor(Math.random() * this.mobs.length)]
+        isValid = op.actions.filter((action) => {
+          return ('damage_dice' in action)
+        }).length > 0
       }
 
       this.opponents.push(op)
@@ -228,7 +245,9 @@ export default {
   },
   computed: {
     byLevel: function () {
-      return this.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
+      return this.advancement.filter((data) => {
+        return data.level === this.character.attr.lvl
+      })[0]
     },
     ...mapState(['character'])
   },

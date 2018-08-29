@@ -1,21 +1,21 @@
 <template>
     <div class="mobs container-fluid">
         <div class="columns">
-          <div class="column is-3">
-            <div class="box">
-              <div class="field">
-                <div class="control">
-                  <input type="text" class="input" v-model="searchFilter" placeholder="Filter Mobs" />
+            <div class="column is-3">
+                <div class="box">
+                    <div class="field">
+                        <div class="control">
+                            <input type="text" class="input" v-model="searchFilter" placeholder="Filter Mobs" />
+                        </div>
+                    </div>
+                    <div v-for="(mob, index) in filteredMobs" :key="index">
+                        <a @click="setDetail(mob.name)">{{ mob.name }}</a>
+                    </div>
                 </div>
-              </div>
-              <div v-for="(mob, index) in filteredMobs" :key="index">
-                <a @click="setDetail(mob.name)">{{ mob.name }}</a>
-              </div>
             </div>
-          </div>
-          <div class="column is-9">
-            <pre>{{ detail | pretty }}</pre>
-          </div>
+            <div class="column is-9">
+                <pre>{{ detail | pretty }}</pre>
+            </div>
         </div>
     </div>
 </template>
@@ -27,14 +27,18 @@ export default {
   name: 'mobs',
   data () {
     return {
-      mobs: mobData.filter((mob) => { return ('name' in mob) }),
+      mobs: mobData.filter((mob) => {
+        return ('name' in mob)
+      }),
       searchFilter: '',
       detail: {}
     }
   },
   methods: {
     setDetail: function (name) {
-      this.detail = this.mobs.filter((mob) => { return mob.name === name })[0]
+      this.detail = this.mobs.filter((mob) => {
+        return mob.name === name
+      })[0]
     }
   },
   filters: {
@@ -44,14 +48,16 @@ export default {
   },
   computed: {
     filteredMobs: function () {
-      return this.searchFilter.length ? this.mobs.filter((mob) => { return mob.name.toLowerCase().indexOf(this.searchFilter.toLowerCase()) >= 0 }) : this.mobs
+      return this.searchFilter.length ? this.mobs.filter((mob) => {
+        return mob.name.toLowerCase().indexOf(this.searchFilter.toLowerCase()) >= 0
+      }) : this.mobs
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .mobs {
-    padding: 16px;
-  }
+    .mobs {
+        padding: 16px;
+    }
 </style>
