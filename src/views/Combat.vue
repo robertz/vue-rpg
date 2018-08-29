@@ -1,67 +1,65 @@
 <template>
-<div class="combat container-fluid">
-    <div class="columns">
-        <div class="column char">
+    <div class="combat container-fluid">
+        <div class="row">
+            <div class="col m-1">
 
-            <div class="box">
-              <h5 class="title is-5">{{ character.name }}</h5>
-              <div>
-                <h6 class="title is-6 is-spaced">Attributes</h6>
-                <div>Level: {{ character.attr.lvl }}</div>
-                <div>Exp: {{ character.attr.xp }}</div>
-                <div>HP: {{ character.current.hp }} / {{ character.attr.hp }}</div>
-              </div>
-              <div style="margin-top: 10px;">
-                <h6 class="title is-6 is-spaced">Stats</h6>
-                <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
-                <div>Dex: {{ character.stats.dex }} ({{ character.stats.dex | modifier | plussed }})</div>
-                <div>Con: {{ character.stats.con }} ({{ character.stats.con | modifier | plussed }})</div>
-                <div>Int: {{ character.stats.int }} ({{ character.stats.int | modifier | plussed }})</div>
-                <div>Wis: {{ character.stats.wis }} ({{ character.stats.wis | modifier | plussed }})</div>
-                <div>Chr: {{ character.stats.chr }} ({{ character.stats.chr | modifier | plussed }})</div>
-              </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">{{ character.name }}</div>
+                        <div class="card-subtitle text-muted">Attributes</div>
+                        <div>Level: {{ character.attr.lvl }}</div>
+                        <div>Exp: {{ character.attr.xp }}</div>
+                        <div>HP: {{ character.current.hp }} / {{ character.attr.hp }}</div>
+
+                        <div class="card-subtitle mt-1 text-muted">Stats</div>
+                        <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
+                        <div>Dex: {{ character.stats.dex }} ({{ character.stats.dex | modifier | plussed }})</div>
+                        <div>Con: {{ character.stats.con }} ({{ character.stats.con | modifier | plussed }})</div>
+                        <div>Int: {{ character.stats.int }} ({{ character.stats.int | modifier | plussed }})</div>
+                        <div>Wis: {{ character.stats.wis }} ({{ character.stats.wis | modifier | plussed }})</div>
+                        <div>Chr: {{ character.stats.chr }} ({{ character.stats.chr | modifier | plussed }})</div>
+                    </div>
+                </div>
+
+                <p class="card-subtitle mt-1 text-muted">Challenge Rating</p>
+                <select class="form-control mt-1" v-model="challengeRating">
+                    <option value="">Any</option>
+                    <option v-for="(cr, i) in challengeRatingData" :value="cr.challenge_rating" :key="i">{{ cr.challenge_rating }}</option>
+                </select>
+
+                <button class="btn btn-primary mt-1" v-if="(mobsAlive && alive) && !canLevel" @click="eventLoop">Attack</button>
+                <button class="btn btn-primary mt-1" v-if="(!mobsAlive || !alive) && !canLevel" @click="restart">Restart Combat</button>
+                <router-link class="btn btn-warning mt-1" v-if="canLevel" to="/character">Level Up!</router-link>
             </div>
 
-            <p>Challenge Rating</p>
-            <div class="select is-rounded">
-              <select v-model="challengeRating">
-                <option value="">Any</option>
-                <option v-for="(cr, i) in challengeRatingData" :value="cr.challenge_rating" :key="i">{{ cr.challenge_rating }}</option>
-              </select>
+            <div class="col m-1">
+                <div v-for="(opponent, i) in opponents" :key="i" class="card">
+                    <div class="card-body">
+                        <div class="card-title mb-1">{{ opponent.name }}</div>
+                        Challenge Rating: {{ opponent.challenge_rating }}<br />
+                        HP: {{ opponent._hit_points }} / {{ opponent.hit_points }}
+                        <h6 class="title is-6">Stats</h6>
+                        <div>Str: {{ opponent.strength }} ({{ opponent.strength | modifier | plussed }})</div>
+                        <div>Dex: {{ opponent.dexterity }} ({{ opponent.dexterity | modifier | plussed }})</div>
+                        <div>Con: {{ opponent.constitution }} ({{ opponent.constitution | modifier | plussed }})</div>
+                        <div>Int: {{ opponent.intelligence }} ({{ opponent.intelligence | modifier | plussed }})</div>
+                        <div>Wis: {{ opponent.wisdom }} ({{ opponent.wisdom | modifier | plussed }})</div>
+                        <div>Chr: {{ opponent.charisma }} ({{ opponent.charisma | modifier | plussed }})</div>
+                    </div>
+                </div>
             </div>
 
-            <br><br>
-
-            <a class="button is-primary" v-if="(mobsAlive && alive) && !canLevel" @click="eventLoop">Attack</a>
-            <a class="button is-primary" v-if="(!mobsAlive || !alive) && !canLevel" @click="restart">Restart Combat</a>
-            <router-link class="button is-warning" v-if="canLevel" to="/character">Level Up!</router-link>
+            <div class="col mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Combat Log</p>
+                        <div v-for="(item, index) in combatLog" :key="index">{{ item }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="column char">
-          <div v-for="(opponent, i) in opponents" :key="i" class="box">
-            <h5 class="title is-5">{{ opponent.name }}</h5>
-            Challenge Rating: {{ opponent.challenge_rating }}<br />
-            HP: {{ opponent._hit_points }} / {{ opponent.hit_points }}
-
-            <h6 class="title is-6">Stats</h6>
-            <div>Str: {{ opponent.strength }} ({{ opponent.strength | modifier | plussed }})</div>
-            <div>Dex: {{ opponent.dexterity }} ({{ opponent.dexterity | modifier | plussed }})</div>
-            <div>Con: {{ opponent.constitution }} ({{ opponent.constitution | modifier | plussed }})</div>
-            <div>Int: {{ opponent.intelligence }} ({{ opponent.intelligence | modifier | plussed }})</div>
-            <div>Wis: {{ opponent.wisdom }} ({{ opponent.wisdom | modifier | plussed }})</div>
-            <div>Chr: {{ opponent.charisma }} ({{ opponent.charisma | modifier | plussed }})</div>
-          </div>
-        </div>
-
-        <div class="column char">
-          <div class="box is-full-height">
-            <h5 class="title is-5">Combat Log</h5>
-            <div v-for="(item, index) in combatLog" :key="index">{{ item }}</div>
-          </div>
-        </div>
     </div>
-
-</div>
 </template>
 
 <script>
@@ -237,9 +235,3 @@ export default {
   mixins: [mixins]
 }
 </script>
-
-<style lang="scss" scoped>
-.char {
- margin: 8px 12px;
-}
-</style>

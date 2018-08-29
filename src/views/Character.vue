@@ -1,7 +1,7 @@
 <template>
-  <div class="character container-fluid">
-      <div class="columns mt-1" v-if="!character.init">
-          <div class="column">
+    <div class="character container-fluid">
+        <div class="row mt-1" v-if="!character.init">
+            <div class="col-3 m-2">
 
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
@@ -89,107 +89,109 @@
             <div>
                 <a class="button is-success" @click="saveCharacter">Save</a>
             </div>
-          </div>
-          <div class="column">
-             <p>Str Modifier: {{ character.stats.str | modifier }}</p>
-             <p>Dex Modifier: {{ character.stats.dex | modifier }}</p>
-             <p>Con Modifier: {{ character.stats.con | modifier }}</p>
-             <p>Int Modifier: {{ character.stats.int | modifier }}</p>
-             <p>Wis Modifier: {{ character.stats.wis | modifier }}</p>
-             <p>Chr Modifier: {{ character.stats.chr | modifier }}</p>
-          </div>
-      </div>
-      <div class="columns" v-if="character.init && character.attr.lvl === levelByExperience">
-          <div class="column is-3">
-              <div class="box">
-                <h5 class="title">{{ character.name }}</h5>
-                <div>
-                  <h6 class="title is-6 is-spaced">Attributes</h6>
-                  <div>Level: {{ character.attr.lvl }}</div>
-                  <div>Exp: {{ character.attr.xp }}</div>
-                  <div>HP: {{ character.attr.hp }}</div>
-                </div>
-                <div style="margin-top: 10px;">
-                  <h6 class="title is-6 is-spaced">Stats</h6>
-                  <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
-                  <div>Dex: {{ character.stats.dex }} ({{ character.stats.dex | modifier | plussed }})</div>
-                  <div>Con: {{ character.stats.con }} ({{ character.stats.con | modifier | plussed }})</div>
-                  <div>Int: {{ character.stats.int }} ({{ character.stats.int | modifier | plussed }})</div>
-                  <div>Wis: {{ character.stats.wis }} ({{ character.stats.wis | modifier | plussed }})</div>
-                  <div>Chr: {{ character.stats.chr }} ({{ character.stats.chr | modifier | plussed }})</div>
-                </div>
-              </div>
-          </div>
-      </div>
-      <div class="columns" v-if="character.init && character.attr.lvl < levelByExperience">
-          <div class="column is-3">
-            <div class="notification is-success">
-              You have leveled
             </div>
-            <div class="box">
-              <h5 class="title">{{ character.name }}</h5>
-              <div>
-                <h6 class="title is-6 is-spaced">Attributes</h6>
-                <div>Level: {{ character.attr.lvl }}</div>
-                <div>Exp: {{ character.attr.xp }}</div>
-                <div>HP: {{ character.attr.hp }}</div>
-                <div>Points Available: {{ 2 - pointsAssigned }}</div>
-              </div>
-              <div style="margin-top: 10px;">
-                <table class="table is-narrow is-fullwidth">
-                  <thead>
-                    <tr>
-                      <th>Stat</th>
-                      <th>Val</th>
-                      <th>Mod</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tr>
-                    <td>Str</td>
-                    <td>{{ character.stats.str }}</td>
-                    <td>{{ character.stats.str | modifier | plussed }}</td>
-                    <td><a class="button is-info" @click="addPoint('str')"> + </a></td>
-                  </tr>
-                  <tr>
-                    <td>Dex</td>
-                    <td>{{ character.stats.dex }}</td>
-                    <td>{{ character.stats.dex | modifier | plussed }}</td>
-                    <td><a class="button is-info" @click="addPoint('dex')"> + </a></td>
-                  </tr>
-                  <tr>
-                    <td>Con</td>
-                    <td>{{ character.stats.con }}</td>
-                    <td>{{ character.stats.con | modifier | plussed }}</td>
-                    <td><a class="button is-info" @click="addPoint('con')"> + </a></td>
-                  </tr>
-                  <tr>
-                    <td>Int</td>
-                    <td>{{ character.stats.int }}</td>
-                    <td>{{ character.stats.int | modifier | plussed }}</td>
-                    <td><a class="button is-info" @click="addPoint('int')"> + </a></td>
-                  </tr>
-                  <tr>
-                    <td>Wis</td>
-                    <td>{{ character.stats.wis }}</td>
-                    <td>{{ character.stats.wis | modifier | plussed }}</td>
-                    <td><a class="button is-info" @click="addPoint('wis')"> + </a></td>
-                  </tr>
-                  <tr>
-                    <td>Chr</td>
-                    <td>{{ character.stats.chr }}</td>
-                    <td>{{ character.stats.chr | modifier | plussed }}</td>
-                    <td><a class="button is-info" @click="addPoint('chr')"> + </a></td>
-                  </tr>
-                </table>
-              </div>
+            <div class="column">
+                <p>Str Modifier: {{ character.stats.str | modifier }}</p>
+                <p>Dex Modifier: {{ character.stats.dex | modifier }}</p>
+                <p>Con Modifier: {{ character.stats.con | modifier }}</p>
+                <p>Int Modifier: {{ character.stats.int | modifier }}</p>
+                <p>Wis Modifier: {{ character.stats.wis | modifier }}</p>
+                <p>Chr Modifier: {{ character.stats.chr | modifier }}</p>
+            </div>
+        </div>
 
-              <br>
-              <a class="button is-link" @click="saveLevel()">Save</a>
+        <div class="row" v-if="character.init && character.attr.lvl === levelByExperience">
+        <div class="col-3 m-2">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ character.name }}</h5>
+                    <div>
+                        <div class="card-subtitle mt-1 mb-2 text-muted">Attributes</div>
+                        <div>Level: {{ character.attr.lvl }}</div>
+                        <div>Exp: {{ character.attr.xp }}</div>
+                        <div>HP: {{ character.attr.hp }}</div>
+                    </div>
+                    <div class="card-subtitle mt-1 mb-2 text-muted">Stats</div>
+                    <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
+                    <div>Dex: {{ character.stats.dex }} ({{ character.stats.dex | modifier | plussed }})</div>
+                    <div>Con: {{ character.stats.con }} ({{ character.stats.con | modifier | plussed }})</div>
+                    <div>Int: {{ character.stats.int }} ({{ character.stats.int | modifier | plussed }})</div>
+                    <div>Wis: {{ character.stats.wis }} ({{ character.stats.wis | modifier | plussed }})</div>
+                    <div>Chr: {{ character.stats.chr }} ({{ character.stats.chr | modifier | plussed }})</div>
+                </div>
             </div>
-          </div>
-      </div>
-  </div>
+        </div>
+        </div>
+
+        <div class="row" v-if="character.init && character.attr.lvl < levelByExperience">
+            <div class="col-3 mt-2">
+            <div class="alert alert-success" role="alert">
+                You have leveled!
+            </div>
+            <div class="card mt-2">
+                <div class="card-body">
+
+                    <div class="card-title">{{ character.name }}</div>
+                    <div class="card-subtitle mt-1 mb-2 text-muted">Attributes</div>
+                    <div>Level: {{ character.attr.lvl }}</div>
+                    <div>Exp: {{ character.attr.xp }}</div>
+                    <div>HP: {{ character.attr.hp }}</div>
+                    <div>Points Available: {{ 2 - pointsAssigned }}</div>
+
+                    <table class="table table-sm w-100 mt-2">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Stat</th>
+                                <th>Val</th>
+                                <th>Mod</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Str</td>
+                            <td>{{ character.stats.str }}</td>
+                            <td>{{ character.stats.str | modifier | plussed }}</td>
+                            <td><button class="btn btn-primary" @click="addPoint('str')"> + </button></td>
+                        </tr>
+                        <tr>
+                            <td>Dex</td>
+                            <td>{{ character.stats.dex }}</td>
+                            <td>{{ character.stats.dex | modifier | plussed }}</td>
+                            <td><button class="btn btn-primary" @click="addPoint('dex')"> + </button></td>
+                        </tr>
+                        <tr>
+                            <td>Con</td>
+                            <td>{{ character.stats.con }}</td>
+                            <td>{{ character.stats.con | modifier | plussed }}</td>
+                            <td><button class="btn btn-primary" @click="addPoint('con')"> + </button></td>
+                        </tr>
+                        <tr>
+                            <td>Int</td>
+                            <td>{{ character.stats.int }}</td>
+                            <td>{{ character.stats.int | modifier | plussed }}</td>
+                            <td><button class="btn btn-primary" @click="addPoint('int')"> + </button></td>
+                        </tr>
+                        <tr>
+                            <td>Wis</td>
+                            <td>{{ character.stats.wis }}</td>
+                            <td>{{ character.stats.wis | modifier | plussed }}</td>
+                            <td><button class="btn btn-primary" @click="addPoint('wis')"> + </button></td>
+                        </tr>
+                        <tr>
+                            <td>Chr</td>
+                            <td>{{ character.stats.chr }}</td>
+                            <td>{{ character.stats.chr | modifier | plussed }}</td>
+                            <td><button class="btn btn-primary" @click="addPoint('chr')"> + </button></td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+            <button class="btn btn-danger mt-2 mr-2" @click="pointsAssigned = 0" :disabled="pointsAssigned === 0">Reset</button>
+            <button class="btn btn-success mt-2" @click="saveLevel()" :disabled="pointsAssigned < 2">Save</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -241,9 +243,3 @@ export default {
   mixins: [mixins]
 }
 </script>
-
-<style lang="scss" scoped>
-    .character {
-      padding: 16px;
-    }
-</style>
