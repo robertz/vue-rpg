@@ -194,8 +194,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import mixins from '../mixins.js'
-import gameData from '../gameData.json'
+import mixins from '../mixins/gameData.js'
 
 export default {
   name: 'character',
@@ -224,7 +223,7 @@ export default {
       this.character.init = true
 
       // Add in racial bonuses
-      let race = gameData.races.filter((race) => { return race.name === this.character.race })[0].stats
+      let race = this.races.filter((race) => { return race.name === this.character.race })[0].stats
       for (let stat in race) {
         this.character.stats[stat] = parseInt(this.character.stats[stat]) + race[stat]
       }

@@ -67,14 +67,10 @@
 <script>
 import { mapState } from 'vuex'
 import mobData from '../5e-SRD-Monsters.json'
-import gameData from '../gameData.json'
-import mixins from '../mixins.js'
+import mixins from '../mixins/gameData.js'
 
 export default {
   name: 'combat',
-  created () {
-    this.challengeRatingData = gameData.experience
-  },
   data () {
     return {
       challengeRating: '',
@@ -183,7 +179,7 @@ export default {
         this.combatLog.push('You have won!!!!')
 
         for (let i = 0; i < this.opponents.length; i++) {
-          this.character.attr.xp += gameData.experience.filter((cr) => { return cr.challenge_rating === this.opponents[i].challenge_rating })[0].xp
+          this.character.attr.xp += this.challengeRatingData.filter((cr) => { return cr.challenge_rating === this.opponents[i].challenge_rating })[0].xp
         }
 
         this.$store.commit('SET_CHARACTER', this.character)
@@ -234,7 +230,7 @@ export default {
   },
   computed: {
     byLevel: function () {
-      return gameData.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
+      return this.advancement.filter((data) => { return data.level === this.character.attr.lvl })[0]
     },
     ...mapState(['character'])
   },

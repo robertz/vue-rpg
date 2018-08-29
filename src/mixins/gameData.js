@@ -1,6 +1,11 @@
-import gameData from './gameData.json'
+import gameData from '../gameData.json'
 
 export default {
+  created () {
+    this.challengeRatingData = gameData.experience
+    this.advancement = gameData.advancement
+    this.races = gameData.races
+  },
   computed: {
     canLevel: function () {
       return this.levelByExperience > this.character.attr.lvl
