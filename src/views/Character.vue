@@ -1,96 +1,77 @@
 <template>
     <div class="character container-fluid">
-        <div class="row mt-1" v-if="!character.init">
+        <div class="row" v-if="!character.init">
             <div class="col-3 m-2">
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Name</label>
+                <div class="form-group">
+                    <label for="cname" class="label">Name</label>
+                    <input id="cname" type="text" class="form-control" placeholder="Character Name" v-model="character.name">
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label for="cstr" class="label">Str</label>
+                        <input id="cstr" type="number" class="form-control" min="1" max="30" maxlength="2" v-model="character.stats.str">
                     </div>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="text" class="input" placeholder="Character Name" v-model="character.name">
-                        </div>
+                    <div class="col-8 mt-4">
+                        <button class="btn btn-primary" @click="setRandValue('str')">Random</button>
                     </div>
                 </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Str</label>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label for="cdex" class="label">Dex</label>
+                        <input id="cdex" type="number" class="form-control" min="1" max="30" maxlength="2" v-model="character.stats.dex">
                     </div>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="number" class="input" min="1" max="30" v-model="character.stats.str">
-                        </div>
+                    <div class="col-8 mt-4">
+                        <button class="btn btn-primary" @click="setRandValue('dex')">Random</button>
                     </div>
-                    <a class="button is-link" @click="setRandValue('str')">Random</a>
                 </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Dex</label>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label for="ccon" class="label">Con</label>
+                        <input id="ccon" type="number" class="form-control" min="1" max="30" maxlength="2" v-model="character.stats.con">
                     </div>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="number" class="input" min="1" max="30" v-model="character.stats.dex">
-                        </div>
+                    <div class="col-8 mt-4">
+                        <button class="btn btn-primary" @click="setRandValue('con')">Random</button>
                     </div>
-                    <a class="button is-link" @click="setRandValue('dex')">Random</a>
                 </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Con</label>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label for="cint" class="label">Int</label>
+                        <input id="cint" type="number" class="form-control" min="1" max="30" maxlength="2" v-model="character.stats.int">
                     </div>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="number" class="input" min="1" max="30" v-model="character.stats.con">
-                        </div>
+                    <div class="col-8 mt-4">
+                        <button class="btn btn-primary" @click="setRandValue('int')">Random</button>
                     </div>
-                    <a class="button is-link" @click="setRandValue('con')">Random</a>
                 </div>
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Int</label>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label for="cwis" class="label">Wis</label>
+                        <input id="cwis" type="number" class="form-control" min="1" max="30" maxlength="2" v-model="character.stats.wis">
                     </div>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="number" class="input" min="1" max="30" v-model="character.stats.int">
-                        </div>
+                    <div class="col-8 mt-4">
+                        <button class="btn btn-primary" @click="setRandValue('wis')">Random</button>
                     </div>
-                    <a class="button is-link" @click="setRandValue('int')">Random</a>
                 </div>
-
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Wis</label>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label for="cstr" class="label">Chr</label>
+                        <input id="cstr" type="number" class="form-control" min="1" max="30" maxlength="2" v-model="character.stats.chr">
                     </div>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="number" class="input" min="1" max="30" v-model="character.stats.wis">
-                        </div>
+                    <div class="col-8 mt-4">
+                        <button class="btn btn-primary" @click="setRandValue('chr')">Random</button>
                     </div>
-                    <a class="button is-link" @click="setRandValue('wis')">Random</a>
-                </div>
-
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Chr</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="number" class="input" min="1" max="30" v-model="character.stats.chr">
-                        </div>
-                    </div>
-                    <a class="button is-link" @click="setRandValue('chr')">Random</a>
                 </div>
 
                 <div>
-                    <a class="button is-success" @click="saveCharacter">Save</a>
+                    <button class="btn btn-success" @click="saveCharacter">Save</button>
                 </div>
             </div>
-            <div class="column">
+            <div class="col-3 mt-2">
                 <p>Str Modifier: {{ character.stats.str | modifier }}</p>
                 <p>Dex Modifier: {{ character.stats.dex | modifier }}</p>
                 <p>Con Modifier: {{ character.stats.con | modifier }}</p>

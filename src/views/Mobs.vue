@@ -1,19 +1,17 @@
 <template>
     <div class="mobs container-fluid">
-        <div class="columns">
-            <div class="column is-3">
-                <div class="box">
-                    <div class="field">
-                        <div class="control">
-                            <input type="text" class="input" v-model="searchFilter" placeholder="Filter Mobs" />
+        <div class="row">
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body">
+                        <input type="text" class="form-control mb-2" v-model="searchFilter" placeholder="Filter Mobs" />
+                        <div class="mob-container" v-for="(mob, index) in filteredMobs" :key="index">
+                            <a @click="setDetail(mob.name)">{{ mob.name }}</a>
                         </div>
-                    </div>
-                    <div v-for="(mob, index) in filteredMobs" :key="index">
-                        <a @click="setDetail(mob.name)">{{ mob.name }}</a>
                     </div>
                 </div>
             </div>
-            <div class="column is-9">
+            <div class="col-9">
                 <pre>{{ detail | pretty }}</pre>
             </div>
         </div>
@@ -57,7 +55,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .mobs {
-        padding: 16px;
+    .mob-container {
+        a {
+            &:hover {
+                color:dodgerblue;
+                cursor: pointer;
+            }
+        }
     }
 </style>
