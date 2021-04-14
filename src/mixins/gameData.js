@@ -20,12 +20,14 @@ export default {
     },
     coin: function () {
       let ref = this.character.attr.cp
+      let p = Math.floor(ref / 1000)
+      ref -= p * 1000
       let g = Math.floor(ref / 100)
       ref -= g * 100
       let s = Math.floor(ref / 10)
       ref -= s * 10
       let c = ref
-      return `${g}g ${s}s ${c}c`
+      return `${p}p ${g}g ${s}s ${c}c`
     }
   },
   methods: {

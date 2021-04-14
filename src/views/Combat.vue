@@ -284,13 +284,15 @@ export default {
         this.getTreasure(this.challengeRating)
 
         let ref = this.treasure
+        let p = Math.floor(ref / 1000)
+        ref -= p * 1000
         let g = Math.floor(ref / 100)
         ref -= g * 100
         let s = Math.floor(ref / 10)
         ref -= s * 10
         let c = ref
 
-        this.combatLog.push(`You find ${g}g ${s}s ${c}c after the battle!`)
+        this.combatLog.push(`You find ${p}p ${g}g ${s}s ${c}c after the battle!`)
         this.character.attr.cp += this.treasure
 
         this.$store.commit('SET_CHARACTER', this.character)
@@ -341,17 +343,6 @@ export default {
     saveCharacter: function () {
       localStorage.setItem('character', JSON.stringify(this.character))
       this.$store.dispatch('refreshCharacter')
-    }
-  },
-  filters: {
-    coin: function () {
-      let ref = this.character.attr.cp
-      let g = Math.floor(ref / 100)
-      ref -= g * 100
-      let s = Math.floor(ref / 10)
-      ref -= s * 10
-      let c = ref
-      return `${g}g ${s}s ${c}c`
     }
   },
   computed: {
