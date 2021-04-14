@@ -89,6 +89,7 @@ export default {
   },
   methods: {
     getTreasure: function (cr) {
+      let tr
       switch (cr) {
         case '0':
         case '1/8':
@@ -98,8 +99,7 @@ export default {
         case '2':
         case '3':
         case '4':
-          let tr = this.roll('1d100')
-          console.log(`tr ${tr}`)
+          tr = this.roll('1d100')
           if (tr <= 30) {
             this.treasure = this.roll('5d6')
           }
@@ -116,12 +116,34 @@ export default {
         case '8':
         case '9':
         case '10':
+          tr = this.roll('1d100')
+          if (tr <= 30) {
+            this.treasure = this.roll('4d6') * 100
+          }
+          if (tr >= 31 && tr <= 70) {
+            this.treasure = this.roll('6d6') * 100 * 10
+          }
+          if (tr >= 71 && tr <= 100) {
+            this.treasure = this.roll('4d6') * 100 * 100
+          }
+          break
         case '11':
         case '12':
         case '13':
         case '14':
         case '15':
         case '16':
+          tr = this.roll('1d100')
+          if (tr <= 30) {
+            this.treasure = this.roll('4d6') * 100 * 10
+          }
+          if (tr >= 31 && tr <= 70) {
+            this.treasure = this.roll('2d6') * 100 * 100
+          }
+          if (tr >= 71 && tr <= 100) {
+            this.treasure = this.roll('4d6') * 100 * 100
+          }
+          break
         case '17':
         case '18':
         case '19':
@@ -136,6 +158,17 @@ export default {
         case '28':
         case '29':
         case '30':
+          tr = this.roll('1d100')
+          if (tr <= 15) {
+            this.treasure = this.roll('8d6') * 100
+          }
+          if (tr >= 16 && tr <= 70) {
+            this.treasure = this.roll('8d6') * 100 * 1000
+          }
+          if (tr >= 71 && tr <= 100) {
+            this.treasure = this.roll('16d6') * 100 * 1000
+          }
+          break
         default:
           break
       }
