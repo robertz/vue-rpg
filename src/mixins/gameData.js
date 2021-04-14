@@ -17,6 +17,15 @@ export default {
         level = this.character.attr.xp >= gameData.advancement[i].xp ? gameData.advancement[i].level : level
       }
       return level
+    },
+    coin: function () {
+      let ref = this.character.attr.cp
+      let g = Math.floor(ref / 100)
+      ref -= g * 100
+      let s = Math.floor(ref / 10)
+      ref -= s * 10
+      let c = ref
+      return `${g}g ${s}s ${c}c`
     }
   },
   methods: {

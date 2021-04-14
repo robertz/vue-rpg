@@ -10,6 +10,7 @@
                         <div>Level: {{ character.attr.lvl }}</div>
                         <div>Exp: {{ character.attr.xp }}</div>
                         <div>HP: {{ character.current.hp }} / {{ character.attr.hp }}</div>
+                        <div>Coin: {{ coin }}</div>
 
                         <div class="card-subtitle mt-1 text-muted">Stats</div>
                         <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
@@ -82,10 +83,63 @@ export default {
       rounds: 0,
       hasInitiative: false,
       opponents: [],
-      combatLog: []
+      combatLog: [],
+      treasure: 0
     }
   },
   methods: {
+    getTreasure: function (cr) {
+      switch (cr) {
+        case '0':
+        case '1/8':
+        case '1/4':
+        case '1/2':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+          let tr = this.roll('1d100')
+          console.log(`tr ${tr}`)
+          if (tr <= 30) {
+            this.treasure = this.roll('5d6')
+          }
+          if (tr >= 31 && tr <= 70) {
+            this.treasure = this.roll('4d6') * 10
+          }
+          if (tr >= 71 && tr <= 100) {
+            this.treasure = this.roll('3d6') * 100
+          }
+          break
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '10':
+        case '11':
+        case '12':
+        case '13':
+        case '14':
+        case '15':
+        case '16':
+        case '17':
+        case '18':
+        case '19':
+        case '20':
+        case '21':
+        case '22':
+        case '23':
+        case '24':
+        case '25':
+        case '26':
+        case '27':
+        case '28':
+        case '29':
+        case '30':
+        default:
+          break
+      }
+    },
     pcAttack: function () {
       let pcAtk = this.roll('1d20')
       switch (pcAtk) {
@@ -193,6 +247,19 @@ export default {
           })[0].xp
         }
 
+        // throw in some coin
+        this.getTreasure(this.challengeRating)
+
+        let ref = this.treasure
+        let g = Math.floor(ref / 100)
+        ref -= g * 100
+        let s = Math.floor(ref / 10)
+        ref -= s * 10
+        let c = ref
+
+        this.combatLog.push(`You find ${g}g ${s}s ${c}c after the battle!`)
+        this.character.attr.cp += this.treasure
+
         this.$store.commit('SET_CHARACTER', this.character)
         this.saveCharacter(this.character)
       }
@@ -241,6 +308,17 @@ export default {
     saveCharacter: function () {
       localStorage.setItem('character', JSON.stringify(this.character))
       this.$store.dispatch('refreshCharacter')
+    }
+  },
+  filters: {
+    coin: function () {
+      let ref = this.character.attr.cp
+      let g = Math.floor(ref / 100)
+      ref -= g * 100
+      let s = Math.floor(ref / 10)
+      ref -= s * 10
+      let c = ref
+      return `${g}g ${s}s ${c}c`
     }
   },
   computed: {

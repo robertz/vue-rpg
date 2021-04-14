@@ -17,7 +17,7 @@ export default new Vuex.Store({
         xp: 0,
         hp: 8,
         ac: 14,
-        cp: 20000
+        cp: 0 // copper
       },
       stats: {
         str: 3,

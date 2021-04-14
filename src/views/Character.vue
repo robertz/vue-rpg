@@ -91,6 +91,7 @@
                             <div>Level: {{ character.attr.lvl }}</div>
                             <div>Exp: {{ character.attr.xp }}</div>
                             <div>HP: {{ character.attr.hp }}</div>
+                            <div>Coin: {{ coin }}</div>
                         </div>
                         <div class="card-subtitle mt-1 mb-2 text-muted">Stats</div>
                         <div>Str: {{ character.stats.str }} ({{ character.stats.str | modifier | plussed }})</div>
